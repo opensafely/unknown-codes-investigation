@@ -8,73 +8,73 @@ actions:
   #   run: >
   #     sqlrunner:latest
   #       queries/APCS.Der_Diagnosis_All.sql
-  #       --output output/gAPCS.Der_Diagnosis_All.csv
+  #       --output output/APCS.Der_Diagnosis_All.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gAPCS.Der_Diagnosis_All.csv
+  #       output: output/APCS.Der_Diagnosis_All.csv
 
   query_APCS_Der__Spell_Primary_Diagnosis:
     run: >
       sqlrunner:latest
         queries/APCS_Der.Spell_Primary_Diagnosis.sql
-        --output output/gAPCS_Der.Spell_Primary_Diagnosis.csv
+        --output output/APCS_Der.Spell_Primary_Diagnosis.csv
     outputs:
       highly_sensitive:
-        output: output/gAPCS_Der.Spell_Primary_Diagnosis.csv
+        output: output/APCS_Der.Spell_Primary_Diagnosis.csv
 
   query_CodedEvent__CTV3Code:
     run: >
       sqlrunner:latest
         queries/CodedEvent.CTV3Code.sql
-        --output output/gCodedEvent.CTV3Code.csv
+        --output output/CodedEvent.CTV3Code.csv
     outputs:
       highly_sensitive:
-        output: output/gCodedEvent.CTV3Code.csv
+        output: output/CodedEvent.CTV3Code.csv
 
   query_CodedEvent_SNOMED__ConceptID:
     run: >
       sqlrunner:latest
         queries/CodedEvent_SNOMED.ConceptID.sql
-        --output output/gCodedEvent_SNOMED.ConceptID.csv
+        --output output/CodedEvent_SNOMED.ConceptID.csv
     outputs:
       highly_sensitive:
-        output: output/gCodedEvent_SNOMED.ConceptID.csv
+        output: output/CodedEvent_SNOMED.ConceptID.csv
 
   # query_EC_Diagnosis__EC_Diagnosis_XX:
   #   run: >
   #     sqlrunner:latest
   #       queries/EC_Diagnosis.EC_Diagnosis_XX.sql
-  #       --output output/gEC_Diagnosis.EC_Diagnosis_XX.csv
+  #       --output output/EC_Diagnosis.EC_Diagnosis_XX.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gEC_Diagnosis.EC_Diagnosis_XX.csv
+  #       output: output/EC_Diagnosis.EC_Diagnosis_XX.csv
 
   # query_EC_Diagnosis__Discharge_Destination_SNOMED_CT:
   #   run: >
   #     sqlrunner:latest
   #       queries/EC_Diagnosis.Discharge_Destination_SNOMED_CT.sql
-  #       --output output/gEC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
+  #       --output output/EC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gEC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
+  #       output: output/EC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
 
   # query_MedicationDictionary__DMD_ID:
   #   run: >
   #     sqlrunner:latest
   #       queries/MedicationDictionary.DMD_ID.sql
-  #       --output output/gMedicationDictionary.DMD_ID.csv
+  #       --output output/MedicationDictionary.DMD_ID.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gMedicationDictionary.DMD_ID.csv
+  #       output: output/MedicationDictionary.DMD_ID.csv
 
   # query_ONS_Deaths__icd10XX:
   #   run: >
   #     sqlrunner:latest
   #       queries/ONS_Deaths.icd10XX.sql
-  #       --output output/gONS_Deaths.icd10XX.csv
+  #       --output output/ONS_Deaths.icd10XX.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gONS_Deaths.icd10XX.csv
+  #       output: output/ONS_Deaths.icd10XX.csv
 
   report:
     run: python:latest analysis/report.py
