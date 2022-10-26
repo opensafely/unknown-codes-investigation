@@ -17,5 +17,10 @@ df <- read_csv("output/output.csv")
 ```{r}
 # Count number of known and unknown codes for each coding system
 df %>%
-  count(coding_system, code_unknown)
+  group_by(coding_system, code_unknown)  %>%
+  summarise(count = n(),
+            min_num = min(num),
+            max_num = max(num),
+            min_date = min(month),
+            max_date = max(month))
 ```
