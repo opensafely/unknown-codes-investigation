@@ -50,10 +50,7 @@ icd10 <- tibble::tribble(~month, ~code, ~num,
                          "2021-12", "V3699", 150)
 
 readr::write_csv(icd10, here::here("output/APCS_Der.Spell_Primary_Diagnosis.csv"))
-
-
-
-
+# readr::write_csv(icd10, here::here("output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv"))
 
 # Create dummy data for snomedct
 snomedct <- tibble::tribble(~month, ~code, ~num,
@@ -107,6 +104,7 @@ snomedct <- tibble::tribble(~month, ~code, ~num,
                             "2021-12", "10001610000001039", 150)
 
 readr::write_csv(snomedct, here::here("output/CodedEvent_SNOMED.ConceptID.csv"))
+readr::write_csv(snomedct, here::here("output/CodedEvent_SNOMED.ConceptID-snomedct.csv"))
 
 # Create dummy data for ctv3
 ctv3 <- tibble::tribble(~month, ~code, ~num,
@@ -160,3 +158,4 @@ ctv3 <- tibble::tribble(~month, ~code, ~num,
                         "2021-12", "A9839", 150)
 
 readr::write_csv(ctv3, here::here("output/CodedEvent.CTV3Code.csv"))
+# readr::write_csv(ctv3, here::here("output/CodedEvent.CTV3Code-ctv3.csv"))

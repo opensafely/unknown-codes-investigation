@@ -17,28 +17,28 @@ actions:
     run: >
       sqlrunner:latest
         queries/APCS_Der.Spell_Primary_Diagnosis.sql
-        --output output/APCS_Der.Spell_Primary_Diagnosis.csv
+        --output output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv
     outputs:
       highly_sensitive:
-        output: output/APCS_Der.Spell_Primary_Diagnosis.csv
+        output: output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv
 
   query_CodedEvent_CTV3Code:
     run: >
       sqlrunner:latest
         queries/CodedEvent.CTV3Code.sql
-        --output output/CodedEvent.CTV3Code.csv
+        --output output/CodedEvent.CTV3Code-ctv3.csv
     outputs:
       highly_sensitive:
-        output: output/CodedEvent.CTV3Code.csv
+        output: output/CodedEvent.CTV3Code-ctv3.csv
 
   query_CodedEvent_SNOMED_ConceptID:
     run: >
       sqlrunner:latest
         queries/CodedEvent_SNOMED.ConceptID.sql
-        --output output/CodedEvent_SNOMED.ConceptID.csv
+        --output output/CodedEvent_SNOMED.ConceptID-snomedct.csv
     outputs:
       highly_sensitive:
-        output: output/CodedEvent_SNOMED.ConceptID.csv
+        output: output/CodedEvent_SNOMED.ConceptID-snomedct.csv
 
   # query_EC_Diagnosis_EC_Diagnosis_XX:
   #   run: >
@@ -76,8 +76,8 @@ actions:
   #     highly_sensitive:
   #       output: output/ONS_Deaths.icd10XX.csv
 
-  report:
-    run: python:latest analysis/report.py
+  tidy_data:
+    run: r:latest analysis/tidy_data.R
     needs:
       # - query_APCS_Der_Diagnosis_All
       - query_APCS_Der_Spell_Primary_Diagnosis
@@ -88,5 +88,5 @@ actions:
       # - query_MedicationDictionary_DMD_ID
       # - query_ONS_Deaths_icd10XX
     outputs:
-      moderately_sensitive:
-        report: output/report.txt
+      highly_sensitive:
+        output: output/output.csv
