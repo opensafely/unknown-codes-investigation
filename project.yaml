@@ -4,89 +4,97 @@ expectations:
   population_size: 1
 
 actions:
-  # query_APCS__Der_Diagnosis_All:
+  # query_APCS_Der_Diagnosis_All:
   #   run: >
   #     sqlrunner:latest
   #       queries/APCS.Der_Diagnosis_All.sql
-  #       --output output/gAPCS.Der_Diagnosis_All.csv
+  #       --output output/APCS.Der_Diagnosis_All.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gAPCS.Der_Diagnosis_All.csv
+  #       output: output/APCS.Der_Diagnosis_All.csv
 
-  query_APCS_Der__Spell_Primary_Diagnosis:
+  query_APCS_Der_Spell_Primary_Diagnosis:
     run: >
       sqlrunner:latest
         queries/APCS_Der.Spell_Primary_Diagnosis.sql
-        --output output/gAPCS_Der.Spell_Primary_Diagnosis.csv
+        --output output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv
     outputs:
       highly_sensitive:
-        output: output/gAPCS_Der.Spell_Primary_Diagnosis.csv
+        output: output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv
 
-  query_CodedEvent__CTV3Code:
+  query_CodedEvent_CTV3Code:
     run: >
       sqlrunner:latest
         queries/CodedEvent.CTV3Code.sql
-        --output output/gCodedEvent.CTV3Code.csv
+        --output output/CodedEvent.CTV3Code-ctv3.csv
     outputs:
       highly_sensitive:
-        output: output/gCodedEvent.CTV3Code.csv
+        output: output/CodedEvent.CTV3Code-ctv3.csv
 
-  query_CodedEvent_SNOMED__ConceptID:
+  query_CodedEvent_SNOMED_ConceptID:
     run: >
       sqlrunner:latest
         queries/CodedEvent_SNOMED.ConceptID.sql
-        --output output/gCodedEvent_SNOMED.ConceptID.csv
+        --output output/CodedEvent_SNOMED.ConceptID-snomedct.csv
     outputs:
       highly_sensitive:
-        output: output/gCodedEvent_SNOMED.ConceptID.csv
+        output: output/CodedEvent_SNOMED.ConceptID-snomedct.csv
 
-  # query_EC_Diagnosis__EC_Diagnosis_XX:
+  # query_EC_Diagnosis_EC_Diagnosis_XX:
   #   run: >
   #     sqlrunner:latest
   #       queries/EC_Diagnosis.EC_Diagnosis_XX.sql
-  #       --output output/gEC_Diagnosis.EC_Diagnosis_XX.csv
+  #       --output output/EC_Diagnosis.EC_Diagnosis_XX.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gEC_Diagnosis.EC_Diagnosis_XX.csv
+  #       output: output/EC_Diagnosis.EC_Diagnosis_XX.csv
 
-  # query_EC_Diagnosis__Discharge_Destination_SNOMED_CT:
+  # query_EC_Diagnosis_Discharge_Destination_SNOMED_CT:
   #   run: >
   #     sqlrunner:latest
   #       queries/EC_Diagnosis.Discharge_Destination_SNOMED_CT.sql
-  #       --output output/gEC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
+  #       --output output/EC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gEC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
+  #       output: output/EC_Diagnosis.Discharge_Destination_SNOMED_CT.csv
 
-  # query_MedicationDictionary__DMD_ID:
+  # query_MedicationDictionary_DMD_ID:
   #   run: >
   #     sqlrunner:latest
   #       queries/MedicationDictionary.DMD_ID.sql
-  #       --output output/gMedicationDictionary.DMD_ID.csv
+  #       --output output/MedicationDictionary.DMD_ID.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gMedicationDictionary.DMD_ID.csv
+  #       output: output/MedicationDictionary.DMD_ID.csv
 
-  # query_ONS_Deaths__icd10XX:
+  # query_ONS_Deaths_icd10XX:
   #   run: >
   #     sqlrunner:latest
   #       queries/ONS_Deaths.icd10XX.sql
-  #       --output output/gONS_Deaths.icd10XX.csv
+  #       --output output/ONS_Deaths.icd10XX.csv
   #   outputs:
   #     highly_sensitive:
-  #       output: output/gONS_Deaths.icd10XX.csv
+  #       output: output/ONS_Deaths.icd10XX.csv
 
-  report:
-    run: python:latest analysis/report.py
+  tidy_data:
+    run: r:latest analysis/tidy_data.R
     needs:
-      # - query_APCS__Der_Diagnosis_All
-      - query_APCS_Der__Spell_Primary_Diagnosis
-      - query_CodedEvent__CTV3Code
-      - query_CodedEvent_SNOMED__ConceptID
-      # - query_EC_Diagnosis__EC_Diagnosis_XX
-      # - query_EC_Diagnosis__Discharge_Destination_SNOMED_CT
-      # - query_MedicationDictionary__DMD_ID
-      # - query_ONS_Deaths__icd10XX
+      - query_APCS_Der_Spell_Primary_Diagnosis
+      - query_CodedEvent_CTV3Code
+      - query_CodedEvent_SNOMED_ConceptID
+      # - query_APCS_Der_Diagnosis_All
+      # - query_EC_Diagnosis_EC_Diagnosis_XX
+      # - query_EC_Diagnosis_Discharge_Destination_SNOMED_CT
+      # - query_MedicationDictionary_DMD_ID
+      # - query_ONS_Deaths_icd10XX
+    outputs:
+      highly_sensitive:
+        output: output/output.csv
+
+  generate_report:
+    run: r:latest -e 'rmarkdown::render("analysis/report.Rmd", knit_root_dir = "/workspace", output_dir = "output/")'
+    needs:
+      - tidy_data
     outputs:
       moderately_sensitive:
-        report: output/report.txt
+        output: output/report.html
