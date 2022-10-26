@@ -2,25 +2,69 @@
 title: "report"
 output: html_document
 date: "2022-10-26"
+output:
+  html_document:
+    code_folding: hide
 ---
 
 ```{r}
 library(tidyverse)
+library(lubridate)
 ```
 
 ```{r}
 # Read data
-df <- read_csv("output/output.csv")
+df_codes <- read_csv("output/output.csv") %>%
+  mutate(month = ym(month)) %>%
+  mutate(code_unknown = factor(case_when(code_unknown ~ "Code unknown",
+                                  !code_unknown ~ "Code known")),
+         data_source = factor(data_source),
+         coding_system = factor(coding_system)) %>%
+  filter(month > as_date("2015-01-01") & month < today())
 ```
 
+# Summary of dataset
 
 ```{r}
 # Count number of known and unknown codes for each coding system
-df %>%
-  group_by(coding_system, code_unknown)  %>%
+df_codes %>%
+  group_by(coding_system, code_unknown) %>%
   summarise(count = n(),
             min_num = min(num),
             max_num = max(num),
             min_date = min(month),
             max_date = max(month))
+```
+
+# Monthly changes in sum of known and unknown codes
+
+```{r}
+df_codes_sum <- df_codes %>%
+  group_by(data_source, coding_system, code_unknown, month) %>%
+  mutate(code_sum_num = sum(num, na.rm = TRUE)) %>%
+  ungroup() %>%
+  select(-num, -code) %>%
+  distinct()
+
+df_codes_sum %>%
+    ggplot2::ggplot(ggplot2::aes(
+      x = month,
+      y = code_sum_num,
+      colour = coding_system
+    )) +
+    ggplot2::geom_line(
+      size = 1,
+      alpha = 0.3
+    ) +
+    ggplot2::geom_point(
+      size = 1.5
+    ) +
+    ggplot2::scale_x_date(
+      date_breaks = "6 months",
+      labels = scales::label_date_short()
+    ) +
+    ggplot2::theme(text = ggplot2::element_text(size = 12)) +
+    ggplot2::facet_wrap(~code_unknown, scales = "free_y", ncol = 1) +
+    ggplot2::scale_y_continuous(labels = scales::comma)
+
 ```
