@@ -2,6 +2,7 @@
 icd10 <- tibble::tribble(~month, ~code, ~num,
                          "2020-01", "V357", 100,
                          "2020-01", "V3579", 150,
+                         "2020-01", "V35799", 50,
                          "2020-02", "V359", 200,
                          "2020-02", "V3599", 250,
                          "2020-03", "V36", 300,
@@ -104,7 +105,7 @@ snomedct <- tibble::tribble(~month, ~code, ~num,
                             "2021-12", "10001610000001039", 150)
 
 readr::write_csv(snomedct, here::here("output/CodedEvent_SNOMED.ConceptID.csv"))
-readr::write_csv(snomedct, here::here("output/CodedEvent_SNOMED.ConceptID-snomedct.csv"))
+# readr::write_csv(snomedct, here::here("output/CodedEvent_SNOMED.ConceptID-snomedct.csv"))
 
 # Create dummy data for ctv3
 ctv3 <- tibble::tribble(~month, ~code, ~num,
