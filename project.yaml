@@ -13,32 +13,32 @@ actions:
   #     highly_sensitive:
   #       output: output/APCS.Der_Diagnosis_All.csv
 
-  query_APCS_Der_Spell_Primary_Diagnosis:
+  query_APCS_Der__Spell_Primary_Diagnosis:
     run: >
       sqlrunner:latest
         queries/APCS_Der.Spell_Primary_Diagnosis.sql
-        --output output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv
+        --output output/gAPCS_Der.Spell_Primary_Diagnosis.csv
     outputs:
       highly_sensitive:
-        output: output/APCS_Der.Spell_Primary_Diagnosis-icd10.csv
+        output: output/gAPCS_Der.Spell_Primary_Diagnosis.csv
 
-  query_CodedEvent_CTV3Code:
+  query_CodedEvent__CTV3Code:
     run: >
       sqlrunner:latest
         queries/CodedEvent.CTV3Code.sql
-        --output output/CodedEvent.CTV3Code-ctv3.csv
+        --output output/gCodedEvent.CTV3Code.csv
     outputs:
       highly_sensitive:
-        output: output/CodedEvent.CTV3Code-ctv3.csv
+        output: output/gCodedEvent.CTV3Code.csv
 
-  query_CodedEvent_SNOMED_ConceptID:
+  query_CodedEvent_SNOMED__ConceptID:
     run: >
       sqlrunner:latest
         queries/CodedEvent_SNOMED.ConceptID.sql
-        --output output/CodedEvent_SNOMED.ConceptID-snomedct.csv
+        --output output/gCodedEvent_SNOMED.ConceptID.csv
     outputs:
       highly_sensitive:
-        output: output/CodedEvent_SNOMED.ConceptID-snomedct.csv
+        output: output/gCodedEvent_SNOMED.ConceptID.csv
 
   # query_EC_Diagnosis_EC_Diagnosis_XX:
   #   run: >
@@ -79,9 +79,9 @@ actions:
   tidy_data:
     run: r:latest analysis/tidy_data.R
     needs:
-      - query_APCS_Der_Spell_Primary_Diagnosis
-      - query_CodedEvent_CTV3Code
-      - query_CodedEvent_SNOMED_ConceptID
+      - query_APCS_Der__Spell_Primary_Diagnosis
+      - query_CodedEvent__CTV3Code
+      - query_CodedEvent_SNOMED__ConceptID
       # - query_APCS_Der_Diagnosis_All
       # - query_EC_Diagnosis_EC_Diagnosis_XX
       # - query_EC_Diagnosis_Discharge_Destination_SNOMED_CT
