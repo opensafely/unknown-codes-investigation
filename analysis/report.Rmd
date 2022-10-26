@@ -1,16 +1,33 @@
 ---
-title: "unknown codes"
-date: "2022-10-26"
+title: "unknown codes investigation"
+date: "`r lubridate::today()`"
 output:
   html_document:
     code_folding: hide
 ---
 
-```{r}
+```{r, rmd-setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
 library(tidyverse)
 library(lubridate)
 library(here)
 ```
+
+# Overview
+
+This report investigates which clinical codes are used in the TPP backend but not available in OpenCodelists.
+
+The current version of the reports looks at the following tables:
+
+- APCS_Der.Spell_Primary_Diagnosis (icd10)
+- CodedEvent.CTV3Code (ctv3)
+- CodedEvent_SNOMED.ConceptID (snomedct)
+
+# Load and summarise data
+
+- The date range was limited from 2015-01-01 to `r lubridate::today()`
 
 ```{r}
 # Read data
@@ -23,12 +40,10 @@ df_codes <- read_csv(here("output/output.csv")) %>%
   filter(month > as_date("2015-01-01") & month < today())
 ```
 
-# Summary of dataset
-
 ```{r}
 # Count number of known and unknown codes for each coding system
 df_codes %>%
-  group_by(coding_system, code_unknown) %>%
+  group_by(data_source, coding_system, code_unknown) %>%
   summarise(count = n(),
             min_num = min(num),
             max_num = max(num),
@@ -38,7 +53,9 @@ df_codes %>%
 
 # Monthly changes in sum of known and unknown codes
 
-```{r}
+```{r fig.width=9, fig.height=6}
+
+# First, calculate sum of number of known/unknown codes used in TPP backend by month
 df_codes_sum <- df_codes %>%
   group_by(data_source, coding_system, code_unknown, month) %>%
   mutate(code_sum_num = sum(num, na.rm = TRUE)) %>%
@@ -46,6 +63,7 @@ df_codes_sum <- df_codes %>%
   select(-num, -code) %>%
   distinct()
 
+# Create plot
 df_codes_sum %>%
     ggplot2::ggplot(ggplot2::aes(
       x = month,
@@ -53,17 +71,18 @@ df_codes_sum %>%
       colour = coding_system
     )) +
     ggplot2::geom_line(
-      size = 1,
+      size = .7,
       alpha = 0.3
     ) +
     ggplot2::geom_point(
-      size = 1.5
+      size = 1,
+      alpha = 0.9
     ) +
     ggplot2::scale_x_date(
       date_breaks = "6 months",
       labels = scales::label_date_short()
     ) +
-    ggplot2::theme(text = ggplot2::element_text(size = 12)) +
+    ggplot2::theme(text = ggplot2::element_text(size = 10)) +
     ggplot2::facet_wrap(~code_unknown, scales = "free_y", ncol = 1) +
     ggplot2::scale_y_continuous(labels = scales::comma)
 
