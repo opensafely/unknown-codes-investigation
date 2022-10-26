@@ -15,9 +15,9 @@ library(here)
 ```{r}
 # Read data
 df_codes <- read_csv(here("output/output.csv")) %>%
-  mutate(month = ym(month)) %>%
+  mutate(month = as.Date(paste0(month, "-01"))) %>%
   mutate(code_unknown = factor(case_when(code_unknown ~ "Code unknown",
-                                  !code_unknown ~ "Code known")),
+                                         !code_unknown ~ "Code known")),
          data_source = factor(data_source),
          coding_system = factor(coding_system)) %>%
   filter(month > as_date("2015-01-01") & month < today())
