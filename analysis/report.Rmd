@@ -1,0 +1,21 @@
+---
+title: "report"
+output: html_document
+date: "2022-10-26"
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# Read data
+df <- read_csv("output/output.csv")
+```
+
+
+```{r}
+# Count number of known and unknown codes for each coding system
+df %>%
+  count(coding_system, code_unknown)
+```

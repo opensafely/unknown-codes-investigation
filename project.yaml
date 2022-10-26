@@ -79,10 +79,10 @@ actions:
   tidy_data:
     run: r:latest analysis/tidy_data.R
     needs:
-      # - query_APCS_Der_Diagnosis_All
       - query_APCS_Der_Spell_Primary_Diagnosis
       - query_CodedEvent_CTV3Code
       - query_CodedEvent_SNOMED_ConceptID
+      # - query_APCS_Der_Diagnosis_All
       # - query_EC_Diagnosis_EC_Diagnosis_XX
       # - query_EC_Diagnosis_Discharge_Destination_SNOMED_CT
       # - query_MedicationDictionary_DMD_ID
@@ -90,3 +90,11 @@ actions:
     outputs:
       highly_sensitive:
         output: output/output.csv
+
+  generate_report:
+    run: r:latest -e 'rmarkdown::render("analysis/report.Rmd", knit_root_dir = "/workspace", output_dir = "output/")'
+    needs:
+      - tidy_data
+    outputs:
+      moderately_sensitive:
+        output: output/report.html
