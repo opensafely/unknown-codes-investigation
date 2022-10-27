@@ -39,5 +39,12 @@ outputs <- outputs %>%
 outputs <- outputs %>%
   dplyr::mutate(code_unknown = !code %in% clinical_codes$code)
 
+# remove nums < 10 and Round all numbers to the nearest 10 and 
+# Although this is currently also done in the sql queries we want have a separate 
+# action for disclosivity ensurance in future
+outputs <- outputs %>%
+   dplyr::filter(num >= 10) %>%
+   dplyr::mutate(num = round(num, -1))
+
 # Write output
 readr::write_csv(outputs, "output/output.csv")
