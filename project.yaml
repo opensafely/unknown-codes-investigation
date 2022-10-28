@@ -76,7 +76,9 @@ actions:
   #     highly_sensitive:
   #       output: output/ONS_Deaths.icd10XX.csv
 
-# This action (1) joins all different datasets and (2) rounds numbers to the nearest 10
+# This action (1) joins all different datasets
+# (2) removes rows with count less than 10
+# (3) rounds numbers to the nearest 10
   tidy_data:
     run: r:latest analysis/tidy_data.R
     needs:
