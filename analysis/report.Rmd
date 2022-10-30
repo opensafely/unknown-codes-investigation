@@ -100,7 +100,9 @@ df_codes %>%
   filter(code_unknown == "Code unknown") %>%
   group_by(data_source, coding_system, code) %>%
   mutate(code_sum = sum(num, na.rm = TRUE)) %>%
+  ungroup() %>%
   select(code, coding_system, code_sum) %>%
+  distinct() %>%
   arrange(-code_sum) %>%
   DT::datatable()
 
