@@ -87,3 +87,21 @@ df_codes_sum %>%
     ggplot2::scale_y_continuous(labels = scales::comma)
 
 ```
+
+
+# Total count of distinct unknown codes 
+
+The following table presents the sum of each unknown code used in TPP between 2015-01-01 to `r lubridate::today()`.
+Note that codes were removed from this analysis if there were less than 10 occurences in a given month.
+
+```{r}
+
+df_codes %>%
+  filter(code_unknown == "Code unknown") %>%
+  group_by(data_source, coding_system, code) %>%
+  mutate(code_sum = sum(num, na.rm = TRUE)) %>%
+  select(code, coding_system, code_sum) %>%
+  arrange(-code_sum) %>%
+  DT::datatable()
+
+```
