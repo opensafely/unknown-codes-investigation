@@ -104,6 +104,7 @@ df_codes %>%
   select(code, coding_system, code_sum) %>%
   distinct() %>%
   arrange(-code_sum) %>%
-  DT::datatable()
+  DT::datatable(filter = 'top',
+                options = list(pageLength = 20))
 
 ```
