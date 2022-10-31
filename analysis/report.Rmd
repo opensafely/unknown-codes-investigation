@@ -106,42 +106,6 @@ df_codes_sum %>%
 
 ```
 
-## Top 5 unknown codes per coding system 
-
-```{r fig.width=9, fig.height=12}
-
-# Select top 5 unknown codes
-df_codes_slice_max5 <- df_codes %>%
-  filter(code_unknown == "Code unknown") %>%
-  group_by(data_source, coding_system, code) %>%
-  mutate(code_sum = sum(num, na.rm = TRUE)) %>%
-  group_by(data_source, coding_system) %>%
-  slice_max(code_sum, n = 5)
-
-# Create individual plots for top 5 unknown
-df_codes_slice_max5 %>%
-  ggplot2::ggplot(ggplot2::aes(
-      x = month,
-      y = num,
-      colour = coding_system
-    )) +
-    ggplot2::geom_line(
-      size = .7,
-      alpha = 0.3
-    ) +
-    ggplot2::geom_point(
-      size = 1,
-      alpha = 0.9
-    ) +
-    ggplot2::scale_x_date(
-      date_breaks = "6 months",
-      labels = scales::label_date_short()
-    ) +
-    ggplot2::theme(text = ggplot2::element_text(size = 10)) +
-    ggplot2::facet_wrap(~code, scales = "free_y", ncol = 1) +
-    ggplot2::scale_y_continuous(labels = scales::comma)
-
-```
 
 # Total count of distinct unknown codes 
 
