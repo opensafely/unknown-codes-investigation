@@ -40,18 +40,36 @@ df_codes <- read_csv(here("output/output.csv")) %>%
   filter(month > as_date("2015-01-01") & month < today())
 ```
 
+The following table shows the minimum and maximum number (`min_num`, `max_num`) and date (`min_date`, `max_date`) of known and unknown codes.
+
 ```{r}
 # Count number of known and unknown codes for each coding system
 df_codes %>%
   group_by(data_source, coding_system, code_unknown) %>%
-  summarise(count = n(),
-            min_num = min(num),
-            max_num = max(num),
+  summarise(min_num = scales::comma(min(num)),
+            max_num = scales::comma(max(num)),
             min_date = min(month),
-            max_date = max(month))
+            max_date = max(month)) %>%
+  DT::datatable()
 ```
 
-# Monthly changes in sum of known and unknown codes
+
+This table shows the count of unique known and unknown codes in TPP each table.
+
+```{r}
+
+df_codes %>%
+  group_by(data_source, coding_system, code_unknown) %>%
+  select(-c(month, num)) %>%
+  distinct() %>%
+  summarise(n_unique_unknown_codes = scales::comma(n())) %>%
+  DT::datatable()
+
+```
+
+# Visualising monthly changes 
+
+## Sum of known and unknown codes
 
 ```{r fig.width=9, fig.height=6}
 
@@ -88,6 +106,42 @@ df_codes_sum %>%
 
 ```
 
+## Top 5 unknown codes per coding system 
+
+```{r fig.width=9, fig.height=12}
+
+# Select top 5 unknown codes
+df_codes_slice_max5 <- df_codes %>%
+  filter(code_unknown == "Code unknown") %>%
+  group_by(data_source, coding_system, code) %>%
+  mutate(code_sum = sum(num, na.rm = TRUE)) %>%
+  group_by(data_source, coding_system) %>%
+  slice_max(code_sum, n = 5)
+
+# Create individual plots for top 5 unknown
+df_codes_slice_max5 %>%
+  ggplot2::ggplot(ggplot2::aes(
+      x = month,
+      y = num,
+      colour = coding_system
+    )) +
+    ggplot2::geom_line(
+      size = .7,
+      alpha = 0.3
+    ) +
+    ggplot2::geom_point(
+      size = 1,
+      alpha = 0.9
+    ) +
+    ggplot2::scale_x_date(
+      date_breaks = "6 months",
+      labels = scales::label_date_short()
+    ) +
+    ggplot2::theme(text = ggplot2::element_text(size = 10)) +
+    ggplot2::facet_wrap(~code, scales = "free_y", ncol = 1) +
+    ggplot2::scale_y_continuous(labels = scales::comma)
+
+```
 
 # Total count of distinct unknown codes 
 
@@ -104,6 +158,6 @@ df_codes %>%
   select(code, coding_system, code_sum) %>%
   distinct() %>%
   arrange(-code_sum) %>%
-  DT::datatable()
-
+  DT::datatable(filter = 'top',
+                options = list(pageLength = 20))
 ```
