@@ -35,6 +35,13 @@ outputs <- outputs %>%
   dplyr::relocate(data_source, coding_system, month, code, num) %>%
   dplyr::select(-file_name)
 
+# Trim supplementary characters from 5-digit ICD-10 codes (e.g., change 'S7200' to 'S720')
+outputs <- outputs %>%
+  dplyr::mutate(code = dplyr::case_when(coding_system == "icd10" &
+                                        stringr::str_length(code) == 5 ~
+                                        stringr::str_trunc(code, width = 4, ellipsis = ""),
+                                        TRUE ~ code))
+
 # Check if clinical codes are known
 outputs <- outputs %>%
   dplyr::mutate(code_unknown = !code %in% clinical_codes$code)
