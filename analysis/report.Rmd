@@ -1,9 +1,12 @@
 ---
-title: "unknown codes investigation"
-date: "`r lubridate::today()`"
+title: "Unknown Codes Investigation"
+date: "Report last updated: `r lubridate::today()`"
 output:
   html_document:
     code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: true
 ---
 
 ```{r, rmd-setup, include=FALSE}
@@ -12,7 +15,10 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
 library(lubridate)
+library(scales)
 library(here)
+library(knitr)
+library(DT)
 ```
 
 # Overview
@@ -27,7 +33,7 @@ The current version of the reports looks at the following tables:
 
 # Load and summarise data
 
-- The date range was limited from 2015-01-01 to `r lubridate::today()`
+- The date range of data presented in this report was limited from 2015-01-01 to **CHECK LAST RUN TIME**
 
 ```{r}
 # Read data
@@ -40,19 +46,22 @@ df_codes <- read_csv(here("output/output.csv")) %>%
   filter(month > as_date("2015-01-01") & month < today())
 ```
 
+## Descriptives
+
 The following table shows the minimum and maximum number (`min_num`, `max_num`) and date (`min_date`, `max_date`) of known and unknown codes.
 
 ```{r}
 # Count number of known and unknown codes for each coding system
 df_codes %>%
   group_by(data_source, coding_system, code_unknown) %>%
-  summarise(min_num = scales::comma(min(num)),
-            max_num = scales::comma(max(num)),
+  summarise(min_num = comma(min(num)),
+            max_num = comma(max(num)),
             min_date = min(month),
             max_date = max(month)) %>%
-  DT::datatable()
+  datatable()
 ```
 
+## Unique codes
 
 This table shows the count of unique known and unknown codes in TPP each table.
 
@@ -62,8 +71,8 @@ df_codes %>%
   group_by(data_source, coding_system, code_unknown) %>%
   select(-c(month, num)) %>%
   distinct() %>%
-  summarise(n_unique_unknown_codes = scales::comma(n())) %>%
-  DT::datatable()
+  summarise(n_unique_unknown_codes = comma(n())) %>%
+  datatable()
 
 ```
 
@@ -83,45 +92,41 @@ df_codes_sum <- df_codes %>%
 
 # Create plot
 df_codes_sum %>%
-    ggplot2::ggplot(ggplot2::aes(
+    ggplot(aes(
       x = month,
       y = code_sum_num,
       colour = coding_system
     )) +
-    ggplot2::geom_line(
+    geom_line(
       size = .7,
       alpha = 0.3
     ) +
-    ggplot2::geom_point(
+    geom_point(
       size = 1,
       alpha = 0.9
     ) +
-    ggplot2::scale_x_date(
+    scale_x_date(
       date_breaks = "6 months",
-      labels = scales::label_date_short()
+      labels = label_date_short()
     ) +
-    ggplot2::theme(text = ggplot2::element_text(size = 10)) +
-    ggplot2::facet_wrap(~code_unknown, scales = "free_y", ncol = 1) +
-    ggplot2::scale_y_continuous(labels = scales::comma)
+    theme(text = ggplot2::element_text(size = 10)) +
+    facet_wrap(~code_unknown, scales = "free_y", ncol = 1) +
+    scale_y_continuous(labels = comma)
 
 ```
 
 
-# Total count of distinct unknown codes 
+# Sum of distinct unknown codes 
 
-The following table presents the sum of each unknown code used in TPP between 2015-01-01 to `r lubridate::today()`.
+The following table presents the sum (`code_sum`) of each unknown code (`code`) used in TPP between 2015-01-01 to `r lubridate::today()`.
 Note that codes were removed from this analysis if there were less than 10 occurences in a given month.
 
-```{r}
-
-df_codes %>%
-  filter(code_unknown == "Code unknown") %>%
-  group_by(data_source, coding_system, code) %>%
-  mutate(code_sum = sum(num, na.rm = TRUE)) %>%
-  ungroup() %>%
-  select(code, coding_system, code_sum) %>%
-  distinct() %>%
-  arrange(-code_sum) %>%
-  DT::datatable(filter = 'top',
-                options = list(pageLength = 20))
+```{r, include=FALSE}
+# Extract list of unique tables
+list_data_sources <- unique(df_codes$data_source)
+# Create object with R chunks contraining table from template file
+tables <- lapply(list_data_sources, function(table) knit_expand(file = here("analysis/table_template.Rmd")))
 ```
+
+<!-- List all R chunks for tables here  -->
+`r knit(text = unlist(tables))`

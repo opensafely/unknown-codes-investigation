@@ -1,0 +1,20 @@
+
+```{r, results='asis'}
+# Add 2nd level heading for each table
+cat("## {{table}}")
+```
+
+```{r}
+# Create one table for each datasource ({{table}})
+df_codes %>%
+  filter(data_source == "{{table}}") %>%
+  filter(code_unknown == "Code unknown") %>%
+  group_by(data_source, coding_system, code) %>%
+  mutate(code_sum = sum(num, na.rm = TRUE)) %>%
+  ungroup() %>%
+  select(code, coding_system, code_sum) %>%
+  distinct() %>%
+  arrange(-code_sum) %>%
+  datatable(filter = 'top',
+            options = list(pageLength = 20))
+```
