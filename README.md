@@ -1,6 +1,6 @@
 # unknown-codes-investigation
 
-[View on OpenSAFELY](https://jobs.opensafely.org/repos/https%3A%2F%2Fgithub.com%2Fopensafely%2Funknown-codes-investigation)
+[View on OpenSAFELY](https://jobs.opensafely.org/repo/https%253A%252F%252Fgithub.com%252Fopensafely%252Funknown-codes-investigation)
 
 This repo is for investigating whether any any columns in TPP contain codes that are not present in OpenCodelists.
 See https://github.com/opensafely-core/opencodelists/issues/1394.
